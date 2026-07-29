@@ -1,12 +1,12 @@
-import { Router } from "express";
-import { getEmployees, getEmployeeById } from "../controllers/employeeController";
+import express from 'express';
+import { getAllEmployees, getEmployeeById } from '../controllers/employeeController';
 
-const router = Router();
+const router = express.Router();
 
-// ==========================================
-// MEMBER 4: EMPLOYEE MANAGEMENT
-// ==========================================
-router.get("/", getEmployees);
-router.get("/:id", getEmployeeById);
+// GET /api/employees - List all employees
+router.get('/', getAllEmployees);
+
+// GET /api/employees/:id - Get employee details and assigned assets
+router.get('/:id', getEmployeeById);
 
 export default router;
