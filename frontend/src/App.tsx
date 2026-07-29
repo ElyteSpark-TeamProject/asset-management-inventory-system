@@ -1,11 +1,6 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
-import Dashboard from "./pages/Dashboard";
-import Assets from "./pages/Assets";
-import Assignments from "./pages/Assignments";
 import Employees from "./pages/Employees";
-import Reports from "./pages/Reports";
-import Login from "./pages/Login";
 
 // Placeholders for unassigned modules
 const Placeholder = ({ title }: { title: string }) => (
@@ -17,19 +12,16 @@ const Placeholder = ({ title }: { title: string }) => (
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="assets" element={<Assets />} />
-          <Route path="employees" element={<Employees />} />
-          <Route path="assignments" element={<Assignments />} />
-          <Route path="reports" element={<Reports />} />
-          <Route path="settings" element={<Placeholder title="Settings" />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route path="/login" element={<Placeholder title="Login" />} />
+      
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Placeholder title="Dashboard" />} />
+        <Route path="assets" element={<Placeholder title="Assets" />} />
+        <Route path="employees" element={<Employees />} />
+        <Route path="assignments" element={<Placeholder title="Assignments" />} />
+        <Route path="reports" element={<Placeholder title="Reports" />} />
+      </Route>
+    </Routes>
   );
 }
