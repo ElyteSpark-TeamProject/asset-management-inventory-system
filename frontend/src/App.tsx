@@ -1,24 +1,35 @@
-import Employees from './pages/Employees';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import Dashboard from "./pages/Dashboard";
+import Assets from "./pages/Assets";
+import Assignments from "./pages/Assignments";
+import Employees from "./pages/Employees";
+import Reports from "./pages/Reports";
+import Login from "./pages/Login";
 
-function App() {
+// Placeholders for unassigned modules
+const Placeholder = ({ title }: { title: string }) => (
+  <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50">
+    <h2 className="text-xl font-medium text-gray-600">{title} Module</h2>
+    <p className="text-gray-400 mt-2">Team member to implement this page.</p>
+  </div>
+);
+
+export default function App() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm mb-6">
-        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
-          <h1 className="text-xl font-semibold text-gray-900">Asset Management System - Test Environment</h1>
-          <button 
-            onClick={() => fetch('/api/seed', { method: 'POST' }).then(() => window.location.reload())}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm"
-          >
-            Seed Database
-          </button>
-        </div>
-      </header>
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Employees />
-      </main>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="assets" element={<Assets />} />
+          <Route path="employees" element={<Employees />} />
+          <Route path="assignments" element={<Assignments />} />
+          <Route path="reports" element={<Reports />} />
+          <Route path="settings" element={<Placeholder title="Settings" />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
-
-export default App;
