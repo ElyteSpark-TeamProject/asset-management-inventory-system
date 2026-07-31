@@ -1,17 +1,19 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Schema } from 'mongoose';
 
-// ==========================================
-// MEMBER 3: ASSIGNMENT MODEL
-// ==========================================
+export interface IAssignment extends Document {
+  assignedTo: mongoose.Types.ObjectId;
+  asset: mongoose.Types.ObjectId;
+  assignedDate: Date;
+  returnDate?: Date | null;
+  conditionOut?: string;
+}
 
-const assignmentSchema = new mongoose.Schema({
-  asset: { type: mongoose.Schema.Types.ObjectId, ref: "Asset", required: true },
-  assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  assignedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Admin who assigned
-  assignedDate: { type: Date, default: Date.now },
-  returnDate: { type: Date }, // Null if currently assigned
-  conditionOut: { type: String }, // Condition when assigned
-  conditionIn: { type: String }, // Condition when returned
+const assignmentSchema = new Schema<IAssignment>({
+  assignedTo: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  asset: { type: Schema.Types.ObjectId, ref: 'Asset', required: true },
+  assignedDate: { type: Date, required: true, default: Date.now },
+  returnDate: { type: Date, default: null },
+  conditionOut: { type: String }
 }, { timestamps: true });
 
-export const Assignment = mongoose.model("Assignment", assignmentSchema);
+export default mongoose.models.Assignment || mongoose.model<IAssignment>('Assignment', assignmentSchema);

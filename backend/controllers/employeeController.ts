@@ -1,53 +1,69 @@
 import { Request, Response } from 'express';
+// Assuming these models will be created by the teammate handling Authentication & Users / Asset Management Core
+import User from '../models/User';
+import Assignment from '../models/Assignment';
 
-// ==========================================
-// MEMBER 4: EMPLOYEE CONTROLLER
-// Task: Implement employee directory and profile view.
-// Safeguard: Returns mock employees list for now since MongoDB is disconnected.
-// ==========================================
-
+/**
+ * @desc    Get all employees
+ * @route   GET /api/employees
+ * @access  Private/Admin (Assuming protected route)
+ */
 export const getAllEmployees = async (req: Request, res: Response): Promise<void> => {
-  const mockEmployees = [
-    { _id: '1', firstName: 'Alice', lastName: 'Smith', email: 'alice@ibm.com', department: 'Software Engineering', role: 'Employee' },
-    { _id: '2', firstName: 'Bob', lastName: 'Jones', email: 'bob@ibm.com', department: 'UX Design', role: 'Employee' },
-    { _id: '3', firstName: 'Charlie', lastName: 'Brown', email: 'charlie@ibm.com', department: 'Human Resources', role: 'Employee' },
-    { _id: '4', firstName: 'Diana', lastName: 'Prince', email: 'diana@ibm.com', department: 'Data Science', role: 'Admin' }
-  ];
-  res.json(mockEmployees);
+  try {
+    // Fetch users with the role 'Employee'.
+    // Use .select('-password') to ensure we don't send sensitive info to the client
+    const employees = await User.find({ role: 'Employee' }).select('-password');
+    
+    res.status(200).json(employees);
+  } catch (error: any) {
+    res.status(500).json({ 
+      message: 'Server error retrieving employees', 
+      error: error.message || 'Unknown error' 
+    });
+  }
 };
 
+/**
+ * @desc    Get employee details and currently assigned assets
+ * @route   GET /api/employees/:id
+ * @access  Private/Admin
+ */
 export const getEmployeeById = async (req: Request, res: Response): Promise<void> => {
-  const employeeId = req.params.id;
-  const mockEmployees = [
-    { _id: '1', firstName: 'Alice', lastName: 'Smith', email: 'alice@ibm.com', department: 'Software Engineering', role: 'Employee' },
-    { _id: '2', firstName: 'Bob', lastName: 'Jones', email: 'bob@ibm.com', department: 'UX Design', role: 'Employee' },
-    { _id: '3', firstName: 'Charlie', lastName: 'Brown', email: 'charlie@ibm.com', department: 'Human Resources', role: 'Employee' },
-    { _id: '4', firstName: 'Diana', lastName: 'Prince', email: 'diana@ibm.com', department: 'Data Science', role: 'Admin' }
-  ];
-  
-  const employee = mockEmployees.find(e => e._id === employeeId);
-  if (!employee) {
-    res.status(404).json({ message: 'Employee not found' });
-    return;
-  }
+  try {
+    const employeeId = req.params.id;
 
-  const assignedAssets = [
-    {
-      assignmentId: 'a1',
-      assignedDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-      conditionOut: 'Excellent',
-      asset: { name: 'MacBook Pro 16"', category: 'Laptop', status: 'Assigned' }
-    },
-    {
-      assignmentId: 'a2',
-      assignedDate: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
-      conditionOut: 'Good',
-      asset: { name: 'Dell UltraSharp 27"', category: 'Monitor', status: 'Assigned' }
+    // Fetch the employee details
+    const employee = await User.findById(employeeId).select('-password');
+
+    if (!employee) {
+      res.status(404).json({ message: 'Employee not found' });
+      return;
     }
-  ];
 
-  res.json({
-    employee,
-    assets: assignedAssets
-  });
+    // Fetch active assignments for this employee
+    // Active means they haven't returned it yet (returnDate is either null or not set)
+    const activeAssignments = await Assignment.find({ 
+      assignedTo: employeeId,
+      returnDate: { $in: [null, undefined] }
+    }).populate('asset'); 
+
+    // Format the response to be clean and easy to consume for the frontend
+    const assignedAssets = activeAssignments.map((assignment: any) => ({
+      assignmentId: assignment._id,
+      assignedDate: assignment.assignedDate,
+      conditionOut: assignment.conditionOut,
+      // The populated asset details
+      asset: assignment.asset 
+    }));
+
+    res.status(200).json({
+      employee,
+      assets: assignedAssets
+    });
+  } catch (error: any) {
+    res.status(500).json({ 
+      message: 'Server error retrieving employee details', 
+      error: error.message || 'Unknown error' 
+    });
+  }
 };
