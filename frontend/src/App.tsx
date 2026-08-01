@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Employees from "./pages/Employees";
+import Reports from "./pages/Reports";
 
 // Placeholders for unassigned modules
 const Placeholder = ({ title }: { title: string }) => (
@@ -20,7 +21,7 @@ export default function App() {
         <Route path="assets" element={<Placeholder title="Assets" />} />
         <Route path="employees" element={<Employees />} />
         <Route path="assignments" element={<Placeholder title="Assignments" />} />
-        <Route path="reports" element={<Placeholder title="Reports" />} />
+        <Route path="reports" element={<Reports />} />
       </Route>
     </Routes>
   );
