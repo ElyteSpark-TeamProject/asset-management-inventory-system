@@ -77,7 +77,7 @@ Follow these steps to set up and run the project on your local machine:
    ```env
    MONGODB_URI="mongodb+srv://<user>:<password>@cluster.mongodb.net/asset_db"
    ```
-
+   
 4. **Start the Development Server:**
    This will start both the frontend (Vite) and backend (Express) concurrently.
    ```bash
