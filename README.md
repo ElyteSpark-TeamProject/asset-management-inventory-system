@@ -98,3 +98,4 @@ npm run build
 # Start the production server
 npm run start
 ```
+test: fix contributor email
