@@ -1,0 +1,6 @@
+{
+  "name": "Corp Asset Management Boilerplate",
+  "description": "A MERN stack boilerplate for an Asset Management & Inventory Tracking System, structured for a team of 7.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
